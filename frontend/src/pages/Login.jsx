@@ -1,4 +1,7 @@
 // import React from 'react'
+
+import { useFormik } from "formik";
+import * as yup from "yup";
 import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import {
   Avatar,
@@ -14,9 +17,94 @@ import { useState } from "react";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
 
-  const toggleLogin = () => setIsLogin((prev) => !prev)
+  //*----------------------------------------> Sign   In <---------------------------------------*//
+  // Define validation schema
+  const validationSchemaSignIn = yup.object({
+    userName: yup
+    .string('Enter your username')
+    .trim()
+    .required('Username is required')
+    .min(3, 'Username should be at least 3 characters')
+    .max(30, 'Username should not exceed 30 characters')
+    .matches(/^[a-zA-Z0-9_.-]*$/, 'Username can only contain alphanumeric characters, underscores, dots, and hyphens'),
+    password: yup
+    .string('Enter your password')
+    .trim()
+    .required('Password is required')
+    .min(8, 'Password should be at least 8 characters')
+    .max(100, 'Password should not exceed 100 characters')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    )
+  });
+
+
+  const formikSignIn = useFormik({
+    initialValues: {
+      userName: '',
+      password: ''
+    },
+    validationSchema: validationSchemaSignIn,
+    onSubmit: (values) => {
+      // handle form submission
+      console.log(values);
+    },
+  });
+
+  //*----------------------------------------> Sign Up <---------------------------------------*//
+  // Define validation schema
+  const validationSchemaSignUp = yup.object({
+    name: yup
+    .string('Enter your name')
+    .trim()
+    .required('Name is required')
+    .min(2, 'Name should be at least 2 characters')
+    .max(50, 'Name should not exceed 50 characters'),
+
+    bio: yup
+    .string('Enter your bio')
+    .trim()
+    .required('Bio is required')
+    .max(200, 'Bio should not exceed 200 characters'),
+
+   userName: yup
+    .string('Enter your username')
+    .trim()
+    .required('Username is required')
+    .min(3, 'Username should be at least 3 characters')
+    .max(30, 'Username should not exceed 30 characters')
+    .matches(/^[a-zA-Z0-9_.-]*$/, 'Username can only contain alphanumeric characters, underscores, dots, and hyphens'),
+    password: yup
+    .string('Enter your password')
+    .trim()
+    .required('Password is required')
+    .min(8, 'Password should be at least 8 characters')
+    .max(100, 'Password should not exceed 100 characters')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    )
+  });
+
+
+  const formikSignUp = useFormik({
+    initialValues: {
+      name: '',
+      bio: '',
+      userName: '',
+      password: ''
+    },
+    validationSchema: validationSchemaSignUp,
+    onSubmit: (values) => {
+      // handle form submission
+      console.log(values);
+    },
+  });
+
+  const toggleLogin = () => setIsLogin((prev) => !prev);
   return (
     <div>
       <Container
@@ -41,26 +129,35 @@ const Login = () => {
           {isLogin ? (
             <>
               <Typography variant="h5">Login</Typography>
-              <form action="">
+              <form action="" onSubmit={formikSignIn.handleSubmit}>
+
                 <TextField
-                  required
                   fullWidth
                   label="Username"
                   margin="normal"
                   variant="outlined"
-                // value={username.value}
-                // onChange={username.changeHandler}
+                  id="userName"
+                  name="userName"
+                  value={formikSignIn.values.userName}
+                  onChange={formikSignIn.handleChange}
+                  onBlur={formikSignIn.handleBlur}
+                  error={formikSignIn.touched.userName && Boolean(formikSignIn.errors.userName)}
+                  helperText={formikSignIn.touched.userName && formikSignIn.errors.userName}
                 />
 
                 <TextField
-                  required
                   fullWidth
                   label="Password"
                   type="password"
                   margin="normal"
                   variant="outlined"
-                // value={password.value}
-                // onChange={password.changeHandler}
+                  id="password"
+                  name="password"
+                  value={formikSignIn.values.password}
+                  onChange={formikSignIn.handleChange}
+                  onBlur={formikSignIn.handleBlur}
+                  error={formikSignIn.touched.password && Boolean(formikSignIn.errors.password)}
+                  helperText={formikSignIn.touched.password && formikSignIn.errors.password}
                 />
 
                 <Button
@@ -101,7 +198,7 @@ const Login = () => {
                   marginTop: "1rem",
                 }}
 
-              // onSubmit={handleSignUp}
+                onSubmit={formikSignUp.handleSubmit}
               >
                 <Stack position={"relative"} width={"10rem"} margin={"auto"}>
 
@@ -134,6 +231,88 @@ const Login = () => {
                     />
                   </IconButton>
                 </Stack>
+                <TextField
+                  fullWidth
+                  label="Name"
+                  margin="normal"
+                  variant="outlined"
+                  id="name"
+                  name="name"
+                  value={formikSignUp.values.name}
+                  onChange={formikSignUp.handleChange}
+                  onBlur={formikSignUp.handleBlur}
+                  error={formikSignUp.touched.name && Boolean(formikSignUp.errors.name)}
+                  helperText={formikSignUp.touched.name && formikSignUp.errors.name}
+                />
+                <TextField
+                  fullWidth
+                  label="Bio"
+                  margin="normal"
+                  variant="outlined"
+                  id="bio"
+                  name="bio"
+                  value={formikSignUp.values.bio}
+                  onChange={formikSignUp.handleChange}
+                  onBlur={formikSignUp.handleBlur}
+                  error={formikSignUp.touched.bio && Boolean(formikSignUp.errors.bio)}
+                  helperText={formikSignUp.touched.bio && formikSignUp.errors.bio}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Username"
+                  margin="normal"
+                  variant="outlined"
+                  id="userName"
+                  name="userName"
+                  value={formikSignUp.values.userName}
+                  onChange={formikSignUp.handleChange}
+                  onBlur={formikSignUp.handleBlur}
+                  error={formikSignUp.touched.userName && Boolean(formikSignUp.errors.userName)}
+                  helperText={formikSignUp.touched.userName && formikSignUp.errors.userName}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Password"
+                  type="password"
+                  margin="normal"
+                  variant="outlined"
+                  id="password"
+                  name="password"
+                  value={formikSignUp.values.password}
+                  onChange={formikSignUp.handleChange}
+                  onBlur={formikSignUp.handleBlur}
+                  error={formikSignUp.touched.password && Boolean(formikSignUp.errors.password)}
+                  helperText={formikSignUp.touched.password && formikSignUp.errors.password}
+                />
+
+
+                <Button
+                  sx={{
+                    marginTop: "1rem",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  fullWidth
+                // disabled={isLoading}
+                >
+                  Sign Up
+                </Button>
+
+                <Typography textAlign={"center"} m={"1rem"}>
+                  OR
+                </Typography>
+
+                <Button
+                  // disabled={isLoading}
+                  fullWidth
+                  variant="text"
+                  onClick={toggleLogin}
+                >
+                  Login Instead
+                </Button>
 
 
               </form>
